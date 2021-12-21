@@ -27,6 +27,13 @@ Route::get('/category', function () {
 
 
 
+// admin panel routes
+
+Route::get('/admin', function () {
+    return view('backEnd.pages.dashboard.dashboard');
+});
+
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
