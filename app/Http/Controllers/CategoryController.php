@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -14,8 +16,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
-        return view('backEnd.pages.category.index');
+        $categories = Category::orderByDesc('created_at')->paginate(20);
+        return view('backEnd.pages.category.index', compact('categories'));
     }
 
     /**
@@ -36,7 +38,31 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate(
+            [
+                'name' => 'required | max:255 | unique:categories,name'
+            ],
+            [
+                'name.required' => "Please enter category name",
+                'name.unique' => "Category name must be unique"
+            ]
+        );
+
+        DB::beginTransaction();
+        try {
+            $category =  Category::create([
+                'name' => $request->name,
+                'slug' =>  Str::of($request->name)->slug('-'),
+                'description' => $request->description
+            ]);
+        } catch (\Throwable $th) {
+            // dd('error');
+            DB::rollback();
+            return redirect()->back()->with(['error' => $th->getMessage()]);
+        }
+        DB::commit();
+        return redirect()->route('category.index')->with(['success' => 'Category created ']);
     }
 
     /**
@@ -58,7 +84,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        return view('backEnd.pages.category.edit', compact('category'));
     }
 
     /**
@@ -70,7 +96,32 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+
+        // dd($request->all());
+
+        $request->validate(
+            [
+                'name' => "required | max:255 | unique:categories,name,$category->name"
+            ],
+            [
+                'name.required' => "Please enter category name",
+                'name.unique' => "Category name must be unique"
+            ]
+        );
+
+        DB::beginTransaction();
+        try {
+            $category->name = $request->name;
+            $category->slug = Str::of($request->name)->slug('-');
+            $category->description = $request->description;
+            $category->save();
+        } catch (\Throwable $th) {
+            // dd('error');
+            DB::rollback();
+            return redirect()->back()->with(['error' => $th->getMessage()]);
+        }
+        DB::commit();
+        return redirect()->route('category.index')->with(['success' => 'Category updated ']);
     }
 
     /**
@@ -81,6 +132,16 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        DB::beginTransaction();
+        try {
+           $category->delete();
+        } catch (\Throwable $th) {
+            // dd('error');
+            DB::rollback();
+            return redirect()->back()->with(['error' => $th->getMessage()]);
+        }
+        DB::commit();
+        return redirect()->route('category.index')->with(['success' => 'Category deleted ']);
+
     }
 }
