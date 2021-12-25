@@ -1,5 +1,6 @@
 @extends('layouts.backEnd')
 @section('backendContent')
+{{-- {{ dd($posts) }} --}}
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -44,7 +45,7 @@
                                     <th>Image</th>
                                     <th>Title</th>
                                     <th>Category</th>
-
+                                    <th>Tag</th>
                                     <th>Author</th>
                                     <th>Action</th>
                                 </tr>
@@ -66,6 +67,11 @@
 
                                             <td>
                                                 {{ $post->category->name }}
+                                            </td>
+                                            <td>
+                                               @foreach ($post->tags as $tag)
+                                                    <span class="badge badge-primary">{{ $tag->name }}</span>
+                                               @endforeach
                                             </td>
                                             <td>
                                                 {{ $post->user->name }}

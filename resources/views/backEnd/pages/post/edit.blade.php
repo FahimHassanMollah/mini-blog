@@ -33,7 +33,8 @@
                                 {{ session('success') }}
                             </div>
                         @endif
-                        <form action="{{ route('post.update', ['post' => $post->id]) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('post.update', ['post' => $post->id]) }}" method="POST"
+                            enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="card-body">
@@ -62,13 +63,35 @@
                                         @enderror
                                     </div>
                                 </div>
+                                <div class="form-group form-check">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Post Tags</label>
+                                    @foreach ($allTags as $tag)
+                                        <div class="form-group form-check">
+                                            <input @foreach ($post->tags as $prevTag) {{ $prevTag->id === $tag->id ? 'checked' : '' }}   @endforeach type="checkbox"  name="tags[]" class="form-check-input"  id="tag{{ $tag->id }}"
+                                                    value="{{ $tag->id }}">
+                                            <label class="form-check-label" for="tag{{ $tag->id }}"> {{ $tag->name }} </label>
+                                        </div>
+                                    @endforeach
+                                   
+                                    {{-- <div>
+                                        @error('category_id')
+                                            <div class="alert-default-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div> --}}
+                                </div>
                                 <div class="form-group d-flex ">
                                     <div>
                                         <label for="postImage">Post Image</label>
-                                        <input oninput="newImage.src=window.URL.createObjectURL(this.files[0])" type="file" name="image" class="form-control" id="postImage">
+                                        <input oninput="newImage.src=window.URL.createObjectURL(this.files[0])" type="file"
+                                            name="image" class="form-control" id="postImage">
                                     </div>
                                     <div class="ml-2">
-                                        <img id="newImage" src="{{ asset('storage/images/'.$post->image) }}" style="height: 100px" alt="">
+                                        <img id="newImage" src="{{ asset('storage/images/' . $post->image) }}"
+                                            style="height: 100px" alt="">
                                     </div>
                                 </div>
                                 <div class="form-group">

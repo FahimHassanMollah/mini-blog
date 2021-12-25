@@ -72,7 +72,6 @@ class TagController extends Controller
      */
     public function show(Tag $tag)
     {
-
     }
 
     /**
@@ -95,7 +94,30 @@ class TagController extends Controller
      */
     public function update(Request $request, Tag $tag)
     {
-        //
+        $request->validate(
+            [
+                'name' => 'required | max:255 | unique:tags,name,' . $tag->id
+            ],
+            [
+                'name.required' => "Please enter tag name",
+                'name.unique' => "Tag name must be unique"
+            ]
+        );
+
+        DB::beginTransaction();
+        try {
+
+            $tag->name = $request->name;
+            $tag->slug = Str::of($request->name)->slug('-');
+            $tag->description = $request->description;
+            $tag->save();
+        } catch (\Throwable $th) {
+            // dd('error');
+            DB::rollback();
+            return redirect()->back()->with(['error' => $th->getMessage()]);
+        }
+        DB::commit();
+        return redirect()->route('tag.index')->with(['success' => 'Tag updated ']);
     }
 
     /**

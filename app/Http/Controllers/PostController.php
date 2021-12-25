@@ -22,7 +22,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('user', 'category')->orderByDesc('created_at')->paginate(20);
+        $posts = Post::with('user', 'category','tags')->orderByDesc('created_at')->paginate(20);
         return view('backEnd.pages.post.index', compact('posts'));
     }
 
@@ -77,6 +77,8 @@ class PostController extends Controller
                 $request->image->storeAs('images', $imageName, 'public');
                 $post->image = $imageName;
                 $post->save();
+
+                $post->tags()->attach($request->tags);
                 // dd($imageName);
             }
             // dd('dont have');
@@ -98,6 +100,9 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        $post->load('tags','category','user');
+        // dd($post);
+        return view('backEnd.pages.post.show',compact('post'));
     }
 
     /**
@@ -110,7 +115,7 @@ class PostController extends Controller
     {
         $allCategories = Category::all();
         $allTags = Tag::all();
-        return view('backEnd.pages.post.edit', compact('post', 'allCategories'));
+        return view('backEnd.pages.post.edit', compact('post', 'allCategories','allTags'));
     }
 
     /**
@@ -154,6 +159,8 @@ class PostController extends Controller
             $post->image = $post->image;
             $post->category_id = $request->category_id;
             $post->save();
+
+            $post->tags()->sync($request->tags);
         } catch (\Throwable $th) {
             // dd('error');
             DB::rollback();
@@ -172,7 +179,7 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         DB::beginTransaction();
-        
+
         try {
 
             if (Storage::disk('public')->exists('/images/' . $post->image)) {

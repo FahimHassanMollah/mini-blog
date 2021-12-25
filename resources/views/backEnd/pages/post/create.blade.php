@@ -1,6 +1,6 @@
 @extends('layouts.backEnd')
 @section('backendContent')
-{{-- {{ dd($allTags) }} --}}
+    {{-- {{ dd($allTags) }} --}}
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -50,9 +50,10 @@
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Post Category</label>
                                     <select class="form-control" name="category_id" id="">
-                                         <option value=""> Select </option>
-                                        @foreach($allCategories as $category)
-                                            <option {{ old('category_id') == $category->id ? 'selected' : '' }} value="{{ $category->id }}">{{ $category->name }}</option>
+                                        <option value=""> Select </option>
+                                        @foreach ($allCategories as $category)
+                                            <option {{ old('category_id') == $category->id ? 'selected' : '' }}
+                                                value="{{ $category->id }}">{{ $category->name }}</option>
                                         @endforeach
                                     </select>
                                     <div>
@@ -62,9 +63,27 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
+                                    <label for="exampleInputEmail1">Post Tags</label>
+                                    <div class="form-group">
+                                        @foreach ($allTags as $tag)
+                                            <div class="custom-control custom-checkbox">
+                                                <input class="custom-control-input" name="tags[]" type="checkbox" id="{{ $tag->id }}"
+                                                    value="{{ $tag->id }}">
+                                                <label for="{{ $tag->id }}" class="custom-control-label">{{ $tag->name }}</label>
+                                            </div>
+                                        @endforeach
+
+
+                                    </div>
+                                    {{-- <div>
+                                        @error('category_id')
+                                            <div class="alert-default-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div> --}}
+                                </div>
+                                <div class="form-group">
                                     <label for="postImage">Post Image</label>
-                                    <input type="file" name="image" class="form-control" id="postImage"
-                                       >
+                                    <input type="file" name="image" class="form-control" id="postImage">
                                     <div>
                                         @error('image')
                                             <div class="alert-default-danger">{{ $message }}</div>
@@ -76,7 +95,7 @@
                                     <textarea name="description" class="form-control" id="postDescription"
                                         placeholder="Enter description" rows="10">{{ old('description') }}</textarea>
 
-                                     <div>
+                                    <div>
                                         @error('description')
                                             <div class="alert-default-danger">{{ $message }}</div>
                                         @enderror
