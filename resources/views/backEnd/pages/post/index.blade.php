@@ -4,12 +4,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Tag List</h1>
+                    <h1 class="m-0 text-dark">Post List</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route('frontEnd.home') }}">Home</a></li>
-                        <li class="breadcrumb-item active">Tag </li>
+                        <li class="breadcrumb-item active">Post </li>
                     </ol>
                 </div>
             </div>
@@ -18,7 +18,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12 d-flex justify-content-end pb-1">
-                <a href="{{ route('tag.create') }}" class="btn btn-primary">Tag Create</a>
+                <a href="{{ route('post.create') }}" class="btn btn-primary">Post Create</a>
             </div>
         </div>
     </div>
@@ -41,43 +41,57 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Name</th>
-                                    <th>Slug</th>
+                                    <th>Image</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
 
+                                    <th>Author</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (count($tags) > 0)
-
-                                    @foreach ($tags as $tag)
+                                @if (count($posts) > 0)
+                                    @foreach ($posts as $post)
                                         <tr>
-                                            <td>{{ $tag->id }}</td>
+                                            <td>
+                                                {{ $post->id }}
+                                            </td>
+                                            <td>
+                                                <div style="height: auto;max-width: 80px;">
+                                                    <img src="{{ asset('storage/images/' . $post->image) }}"
+                                                        class="img-fluid" alt="">
+                                                </div>
+                                            </td>
+                                            <td>{{ $post->title }}</td>
 
                                             <td>
-                                                {{ $tag->name }}
+                                                {{ $post->category->name }}
                                             </td>
-                                            <td><span class="">{{ $tag->slug }}</span></td>
                                             <td>
-                                                <a href="{{ route('tag.show', ['tag' => $tag->id]) }}"
+                                                {{ $post->user->name }}
+                                            </td>
+
+                                            <td>
+                                                <a href="{{ route('post.show', ['post' => $post->id]) }}"
                                                     class="btn btn-secondary">Viiew </a>
-                                                <a href="{{ route('tag.edit', ['tag' => $tag->id]) }}"
-                                                    class="btn btn-secondary">Edit </a>
+                                                <a href="{{ route('post.edit', ['post' => $post->id]) }}"
+                                                    class="btn btn-warning">Edit </a>
                                                 <form class="d-inline-block"
-                                                    action="{{ route('tag.destroy', ['tag' => $tag->id]) }}"
+                                                    action="{{ route('post.destroy', ['post' => $post->id]) }}"
                                                     method="post">
                                                     @csrf
                                                     @method('delete')
                                                     <button type="submit" class="btn btn-danger">Delete</button>
                                                 </form>
-
+                                                {{-- <button class="btn btn-secondary">View</button>
+                                            <button class="btn btn-warning">Edit</button> --}}
                                             </td>
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="5">
-                                            <h1 class="text-center">No tags found</h1>
+                                        <td colspan="7">
+                                            <h1 class="text-center">No post found</h1>
                                         </td>
                                     </tr>
                                 @endif

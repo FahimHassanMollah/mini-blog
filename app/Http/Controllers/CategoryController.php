@@ -101,7 +101,7 @@ class CategoryController extends Controller
 
         $request->validate(
             [
-                'name' => "required | max:255 | unique:categories,name,$category->name"
+                'name' => "required | max:255 | unique:categories,name,". $category->id
             ],
             [
                 'name.required' => "Please enter category name",

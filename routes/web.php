@@ -35,6 +35,7 @@ Route::get('/category', function () {
 Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
     Route::resource('category', 'App\Http\Controllers\CategoryController');
     Route::resource('tag', 'App\Http\Controllers\TagController');
+    Route::resource('post', 'App\Http\Controllers\PostController');
 });
 
 
